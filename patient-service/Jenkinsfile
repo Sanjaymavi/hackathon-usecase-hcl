@@ -1,0 +1,84 @@
+pipeline {
+    agent any
+
+    environment {
+        PROJECT_ID = "YOUR_PROJECT_ID"
+        REGION = "asia-south1"
+
+        IMAGE_NAME = "patient-service"
+
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Image') {
+            steps {
+                sh """
+                docker build \
+                -t ${REGION}-docker.pkg.dev/${PROJECT_ID}/microservices-repo/${IMAGE_NAME}:${IMAGE_TAG} \
+                .
+                """
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                sh """
+                docker push \
+                ${REGION}-docker.pkg.dev/${PROJECT_ID}/microservices-repo/${IMAGE_NAME}:${IMAGE_TAG}
+                """
+            }
+        }
+
+//        stage('Update GitOps Repo') {
+//            steps {
+//                sh '''
+//                rm -rf gitops
+//
+//                git clone https://github.com/YOUR_USERNAME/microservices-gitops.git gitops
+//
+//                sed -i "s|image:.*|image: asia-south1-docker.pkg.dev/${PROJECT_ID}/microservices-repo/patient-service:${IMAGE_TAG}|g" \
+//                gitops/patient-service/deployment.yaml
+//
+//                cd gitops
+//
+//                git config user.email "jenkins@local"
+//
+//                git config user.name "jenkins"
+//
+//                git add .
+//
+//                git commit -m "patient-service ${IMAGE_TAG}"
+//
+//                git push
+//                '''
+//            }
+//        }
+
+        stage('Update Manifest') {
+            steps {
+                sh """
+                sed -i \
+                's#image:.*#image: asia-south1-docker.pkg.dev/${PROJECT_ID}/microservices-repo/patient-service:${BUILD_NUMBER}#' \
+                k8s/patient-service/deployment.yaml
+
+                git config user.name "jenkins"
+                git config user.email "jenkins@local"
+
+                git add k8s/patient-service/deployment.yaml
+
+                git commit -m "Update patient-service image ${BUILD_NUMBER}"
+
+                git push origin main
+                """
+            }
+        }
+    }
+}
