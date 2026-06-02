@@ -28,6 +28,14 @@ pipeline {
 //            }
 //        }
 
+        stage('Authenticate Artifact Registry') {
+            steps {
+                sh '''
+                gcloud auth configure-docker asia-south1-docker.pkg.dev --quiet
+                '''
+            }
+        }
+
         stage('Build Image') {
             steps {
                 sh """
