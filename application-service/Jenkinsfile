@@ -83,6 +83,8 @@ pipeline {
         stage('Update Manifest') {
             steps {
                 sh """
+                git checkout -B main origin/main
+
                 sed -i \
                 's#image:.*#image: asia-south1-docker.pkg.dev/${PROJECT_ID}/microservices-repo/application-service:${BUILD_NUMBER}#' \
                 k8s/application-service/deployment.yaml
