@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_ID = "YOUR_PROJECT_ID"
+        PROJECT_ID = "project-e85d8801-bd70-4ddd-8bc"
         REGION = "asia-south1"
 
-        IMAGE_NAME = "application-service"
+        IMAGE_NAME = "order-service"
 
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
@@ -24,12 +24,23 @@ pipeline {
             }
         }
 
+//        stage('Build Image') {
+//            steps {
+//                sh """
+//                docker build \
+//                -t ${REGION}-docker.pkg.dev/${PROJECT_ID}/microservices-repo/${IMAGE_NAME}:${IMAGE_TAG} \
+//                .
+//                """
+//            }
+//        }
+
         stage('Build Image') {
             steps {
                 sh """
                 docker build \
                 -t ${REGION}-docker.pkg.dev/${PROJECT_ID}/microservices-repo/${IMAGE_NAME}:${IMAGE_TAG} \
-                .
+                -f order-service/Dockerfile \
+                order-service
                 """
             }
         }
@@ -52,8 +63,8 @@ pipeline {
 //
 //                git clone https://github.com/YOUR_USERNAME/microservices-gitops.git gitops
 //
-//                sed -i "s|image:.*|image: asia-south1-docker.pkg.dev/${PROJECT_ID}/microservices-repo/application-service:${IMAGE_TAG}|g" \
-//                gitops/application-service/deployment.yaml
+//                sed -i "s|image:.*|image: asia-south1-docker.pkg.dev/${PROJECT_ID}/microservices-repo/order-service:${IMAGE_TAG}|g" \
+//                gitops/order-service/deployment.yaml
 //
 //                cd gitops
 //
@@ -63,7 +74,7 @@ pipeline {
 //
 //                git add .
 //
-//                git commit -m "application-service ${IMAGE_TAG}"
+//                git commit -m "order-service ${IMAGE_TAG}"
 //
 //                git push
 //                '''
@@ -74,15 +85,15 @@ pipeline {
             steps {
                 sh """
                 sed -i \
-                's#image:.*#image: asia-south1-docker.pkg.dev/${PROJECT_ID}/microservices-repo/patient-service:${BUILD_NUMBER}#' \
-                k8s/patient-service/deployment.yaml
+                's#image:.*#image: asia-south1-docker.pkg.dev/${PROJECT_ID}/microservices-repo/order-service:${BUILD_NUMBER}#' \
+                k8s/order-service/deployment.yaml
 
                 git config user.name "jenkins"
                 git config user.email "jenkins@local"
 
-                git add k8s/patient-service/deployment.yaml
+                git add k8s/order-service/deployment.yaml
 
-                git commit -m "Update patient-service image ${BUILD_NUMBER}"
+                git commit -m "Update order-service image ${BUILD_NUMBER}"
 
                 git push origin main
                 """
