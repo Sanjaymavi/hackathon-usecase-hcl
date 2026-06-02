@@ -94,6 +94,8 @@ pipeline {
                 sh """
                 git checkout -B main origin/main
 
+                git remote set-url origin git@github.com:Sanjaymavi/hackathon-usecase-hcl.git
+
                 sed -i \
                 's#image:.*#image: asia-south1-docker.pkg.dev/${PROJECT_ID}/microservices-repo/order-service:${BUILD_NUMBER}#' \
                 k8s/order-service/deployment.yaml
