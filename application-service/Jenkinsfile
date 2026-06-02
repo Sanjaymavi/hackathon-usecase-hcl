@@ -55,7 +55,6 @@ pipeline {
                 """
             }
         }
-
 //        stage('Update GitOps Repo') {
 //            steps {
 //                sh '''
