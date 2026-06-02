@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_ID = "YOUR_PROJECT_ID"
+        PROJECT_ID = "project-e85d8801-bd70-4ddd-8bc"
         REGION = "asia-south1"
 
         IMAGE_NAME = "application-service"
