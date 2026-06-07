@@ -22,6 +22,16 @@ pipeline {
             }
         }
 
+        stage('Java Dependencies Check') {
+            steps {
+                sh '''
+                java -version
+                javac -version
+                mvn -version
+                '''
+            }
+        }
+
         stage('Maven Build') {
             steps {
                 sh '''
