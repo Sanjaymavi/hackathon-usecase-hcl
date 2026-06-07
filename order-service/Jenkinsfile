@@ -24,7 +24,10 @@ pipeline {
 
         stage('Maven Build') {
             steps {
-                sh 'mvn clean package'
+                sh '''
+                    cd order-service
+                    mvn clean package
+                '''
             }
         }
 

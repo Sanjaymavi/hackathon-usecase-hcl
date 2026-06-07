@@ -20,6 +20,14 @@ pipeline {
             }
         }
 
+        stage('Install Dependencies') {
+            steps {
+                dir('patient-service') {
+                    sh 'npm install'
+                }
+            }
+        }
+
 //        stage('Build Image') {
 //            steps {
 //                sh """
