@@ -3,12 +3,13 @@ kind: Application
 
 metadata:
   name: patient-service
+  namespace: argocd
 
 spec:
   project: default
 
   source:
-    repoURL: https://github.com/Sanjaymavi/hackathon-usecase-hcl-main.git
+    repoURL: https://github.com/Sanjaymavi/hackathon-usecase-hcl.git
     targetRevision: main
     path: k8s/patient-service
 
